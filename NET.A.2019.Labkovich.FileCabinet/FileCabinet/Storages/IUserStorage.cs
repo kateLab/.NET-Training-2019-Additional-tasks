@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace FileCabinet.Storages
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public interface IUserStorage
     {
         /// <summary>

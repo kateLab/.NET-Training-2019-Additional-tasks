@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FileCabinet.Storages
 {
     /// <summary>
-    /// Implenting working with memory 
+    /// Implementing working with memory 
     /// </summary>
     public class FakeUserStorage : IUserStorage
     {

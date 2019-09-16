@@ -7,7 +7,7 @@ namespace FileCabinet
     /// <summary>
     /// User class
     /// </summary>
-    public class User : IEquatable<User>
+    public class User : IEquatable<User>, IComparable<User>
     {
         private string firstName;
 
@@ -16,7 +16,7 @@ namespace FileCabinet
         private string dateOfBirth;
 
         /// <summary>
-        /// Constructor dor user
+        /// Constructor for user
         /// </summary>
         /// <param name="firstName">first name</param>
         /// <param name="secondName">second name</param>
@@ -33,10 +33,7 @@ namespace FileCabinet
 
         public string FirstName
         {
-            get
-            {
-                return this.firstName;
-            }
+            get { return this.firstName; }
             set
             {
                 ValidateString(value);
@@ -59,10 +56,7 @@ namespace FileCabinet
 
         public string DateOfBirth
         {
-            get
-            {
-                return this.dateOfBirth;
-            }
+            get { return this.dateOfBirth; }
             set
             {
                 ValidateString(value);
@@ -84,15 +78,18 @@ namespace FileCabinet
             {
                 return false;
             }
+
             if (ReferenceEquals(this, otherUser))
             {
                 return true;
             }
+
             if (GetHashCode() != otherUser.GetHashCode())
             {
                 return false;
             }
-            return (FirstName == otherUser.FirstName && SecondName == otherUser.SecondName && DateOfBirth == otherUser.DateOfBirth);
+
+            return (this.FirstName == otherUser.FirstName && this.SecondName == otherUser.SecondName && this.DateOfBirth == otherUser.DateOfBirth);
         }
 
         /// <summary>
@@ -106,10 +103,12 @@ namespace FileCabinet
             {
                 return false;
             }
+
             if (obj.GetType() != GetType())
             {
                 return false;
             }
+
             return this.Equals(obj as User);
         }
 
@@ -132,6 +131,18 @@ namespace FileCabinet
         }
         #endregion
 
+        public int CompareTo(User otherUser)
+        {
+            if (otherUser != null)
+            {
+                return ID.CompareTo(otherUser.ID);
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
         #region Validate methods
         private void ValidateString(string stringForCheck)
         {
@@ -139,6 +150,7 @@ namespace FileCabinet
             {
                 throw new ArgumentNullException("String must be not null");
             }
+
             if (stringForCheck.Length < 3)
             {
                 throw new ArgumentException("String must contain first name, or second name, or date");
@@ -147,10 +159,11 @@ namespace FileCabinet
 
         private void ValidateData(string dataForCheck)
         {
+            string[] formats = { "MM/dd/yyyy" };
             bool isValid = DateTime.TryParseExact(
                 dataForCheck,
-                "mm/dd/yyyy",
-                CultureInfo.InvariantCulture,
+                formats,
+               new CultureInfo("en-US"), 
                 DateTimeStyles.None,
                 out DateTime dataTime);
 
@@ -158,7 +171,19 @@ namespace FileCabinet
             {
                 throw new ArgumentException("Date of birth must be in format mm/dd/yyyy");
             }
-        }
+
+            string[] data = dataForCheck.Split(new char[] { '/' });
+            int year = int.Parse(data[2]);
+            if (year >= 2019)
+            {
+                isValid = false;
+            }
+
+            if (!isValid)
+            {
+                throw new ArgumentException("Date of birth must be less than this year");
+            }
+        } 
         #endregion
     }
 }
